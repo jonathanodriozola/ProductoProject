@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using Dapper;
 
 public class ControlStockContext
@@ -11,64 +10,61 @@ public class ControlStockContext
 
     public ControlStockContext()
     {
-        connectionString = ConfigurationManager.ConnectionStrings["ControlStockDB"].ConnectionString;
+        connectionString = ConfigurationManager.ConnectionStrings["ControlStockConnection"].ConnectionString;
     }
 
-    // Obtener todas las categorías desde la base de datos
+    public IDbConnection Connection => new SqlConnection(connectionString);
+
     public IEnumerable<CategoriaModel> GetCategorias()
     {
-        using (IDbConnection connection = new SqlConnection(connectionString))
+        using (IDbConnection conn = Connection)
         {
-            return connection.Query<CategoriaModel>("SELECT * FROM Categorias").ToList();
+            conn.Open();
+            return conn.Query<CategoriaModel>("SELECT * FROM Categorias");
         }
     }
 
-    // Obtener todo el stock desde la base de datos
     public IEnumerable<StockModel> GetStock()
     {
-        using (IDbConnection connection = new SqlConnection(connectionString))
+        using (IDbConnection conn = Connection)
         {
-            return connection.Query<StockModel>("SELECT * FROM Stock").ToList();
+            conn.Open();
+            return conn.Query<StockModel>("SELECT Stock.id, precio, CONVERT(varchar, fecha_carga, 23) AS FechaCarga, Categorias.nombre AS CategoriaNombre FROM Stock INNER JOIN Categorias ON Stock.categoria_id = Categorias.id");
         }
     }
-
-    // Insertar un producto en la base de datos
     public void InsertProducto(StockModel producto)
     {
-        using (IDbConnection connection = new SqlConnection(connectionString))
+        using (IDbConnection conn = Connection)
         {
-            string query = "INSERT INTO Stock (Nombre, Precio, CategoriaId) VALUES (@Nombre, @Precio, @CategoriaId)";
-            connection.Execute(query, producto);
+            conn.Open();
+            string query = "INSERT INTO Stock (precio, fecha_carga, categoria_id) VALUES (@Precio, @FechaCarga, @CategoriaId)";
+            conn.Execute(query, producto);
         }
     }
-
-    // Eliminar un producto de la base de datos
     public void EliminarProducto(int id)
     {
-        using (IDbConnection connection = new SqlConnection(connectionString))
+        using (IDbConnection conn = Connection)
         {
-            string query = "DELETE FROM Stock WHERE Id = @Id";
-            connection.Execute(query, new { Id = id });
+            conn.Open();
+            string query = "DELETE FROM Stock WHERE id = @Id";
+            conn.Execute(query, new { Id = id });
         }
     }
-
-    // Obtener un producto por su id desde la base de datos
     public StockModel GetProducto(int id)
     {
-        using (IDbConnection connection = new SqlConnection(connectionString))
+        using (IDbConnection conn = Connection)
         {
-            string query = "SELECT * FROM Stock WHERE Id = @Id";
-            return connection.QuerySingleOrDefault<StockModel>(query, new { Id = id });
+            conn.Open();
+            return conn.QueryFirstOrDefault<StockModel>("SELECT Stock.id, precio, CONVERT(varchar, fecha_carga, 23) AS FechaCarga, Categorias.id AS CategoriaId, Categorias.nombre AS CategoriaNombre FROM Stock INNER JOIN Categorias ON Stock.categoria_id = Categorias.id WHERE Stock.id = @Id", new { Id = id });
         }
     }
-
-    // Actualizar un producto en la base de datos
     public void ActualizarProducto(StockModel producto)
     {
-        using (IDbConnection connection = new SqlConnection(connectionString))
+        using (IDbConnection conn = Connection)
         {
-            string query = "UPDATE Stock SET Nombre = @Nombre, Precio = @Precio, CategoriaId = @CategoriaId WHERE Id = @Id";
-            connection.Execute(query, producto);
+            conn.Open();
+            string query = "UPDATE Stock SET precio = @Precio, fecha_carga = @FechaCarga, categoria_id = @CategoriaId WHERE id = @Id";
+            conn.Execute(query, new { producto.Precio, producto.FechaCarga, producto.CategoriaId, producto.Id });
         }
     }
 }
