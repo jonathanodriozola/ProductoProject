@@ -30,3 +30,19 @@ CREATE TABLE Stock (
 #"GuardarEdicion(StockModel producto)": Esta funcion se llama cuando se envía el formulario de edición de un producto. Actualiza los datos del producto en la base de datos a través del contexto "ControlStockContext" y redirige a la pagina de inicio
 #"Vender(int[] productosSeleccionados)": Esta acción se llama cuando se realiza una venta de productos seleccionados. Elimina los productos seleccionados de la base de datos a través del contexto "ControlStockContext".
 
+
+
+#Dentro de "/ProductoProject/Data/ControlStockContext.cs"
+#van a tener que cambiar la llamada a la base de datos que en este caso yo lo tengo asi en web.config:
+
+  <connectionStrings>
+    <add name="ControlStockConnection" connectionString="Data Source=JONATHAN-DEV;Integrated Security=true;Initial Catalog=ControlStock" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+  
+#y dendtro de "ControlStockContext.cs"
+#hago la llamada de la siguiente manera:
+connectionString = ConfigurationManager.ConnectionStrings["ControlStockConnection"].ConnectionString;
+
+#si quieren pueden cambiarle el nombre a la conexion y tendran que hacer la conexion a su base de datos.
+
+
