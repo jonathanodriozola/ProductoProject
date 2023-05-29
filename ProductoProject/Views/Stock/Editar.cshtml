@@ -1,0 +1,58 @@
+﻿@model StockModel
+@{
+    ViewBag.Title = "Editar Producto";
+}
+
+<style>
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="number"],
+    input[type="date"],
+    select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    input[type="submit"] {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+</style>
+
+<h2>Editar Producto</h2>
+
+<p>ID del producto: @Model.Id</p>
+
+@using (Html.BeginForm("GuardarEdicion", "Stock", FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.Id)
+
+    <label for="precio">Precio:</label>
+    <input type="number" id="precio" name="producto.Precio" step="0.01" value="@Model.Precio" required />
+
+    <label for="fechaCarga">Fecha de Carga:</label>
+    <input type="date" id="fechaCarga" name="producto.FechaCarga" value="@Model.FechaCarga" required />
+
+    <label for="categoriaId">Categoría:</label>
+    <select id="categoriaId" name="producto.CategoriaId" required>
+        <option value="">Seleccione una categoría</option>
+        @foreach (var categoria in ViewBag.Categorias)
+        {
+            <option value="@categoria.Id" @(categoria.Id == Convert.ToInt32(Model.CategoriaId) ? "selected" : "")>@categoria.Nombre</option>
+        }
+    </select>
+
+    <input type="submit" value="Guardar" />
+}
