@@ -1,6 +1,35 @@
 # ProductoProject
-#Trate de hacer lo que entendi, lo unico que no pude llegar a hacer es lo de que me traiga un producto de cada categoria,
-#Lo que realice fue que me traiga todos los productos que puedan llegar a alcanzar y que seleccione el que quiera vender
+#Pude realizar todo el proyecto que me hicieron realizar, la unica parte en la que logre desarrollar pero de una manera distinta fue la siguiente:
+--*Se deberá ofrecer el de mayor precio.*
+#Lo que hice aca traje los productos que al cliente le alcance con el presupuesto dado de ambas categorias, por ejemplo si el pone que su presupuesto es 300
+y en la tabla estan los siguientes productos:
+
+id  	precio  fecha_carga 	categoria_id 
+1	200.00	2023-05-25	1
+2	500.00	2023-05-25	1
+3	300.00	2023-05-25	1
+
+4	100.00	2023-05-25	2
+5	400.00	2023-05-17	2
+6	700.00	2023-05-05	2
+7	500.00	2023-05-26	2
+8	300.00	2023-05-26	2
+
+Categorias
+
+id  	nombre
+1	PRODUNO
+2	PRODDOS
+
+
+Suponiendo si el presupuesto es 300 trae lo siguiente:
+le va a traer esto:
+1	200.00	2023-05-25	PRODUNO
+3	300.00	2023-05-25	PRODUNO
+4	100.00	2023-05-25	PRODDOS
+8	300.00	2023-05-26	PRODDOS
+
+
 #La conexion a la base de datos obviamente esta en web.config, lo realice en sql server managment, adjunto codigo de las tablas que utilice:
 CREATE TABLE Categorias (
     id INT PRIMARY KEY,
